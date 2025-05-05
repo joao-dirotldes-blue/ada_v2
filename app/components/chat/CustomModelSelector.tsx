@@ -15,13 +15,7 @@ interface ModelSelectorProps {
   modelLoading?: string;
 }
 
-export const CustomModelSelector = ({
-  model,
-  setModel,
-  provider,
-  modelList,
-  modelLoading,
-}: ModelSelectorProps) => {
+export const CustomModelSelector = ({ model, setModel, provider, modelList, modelLoading }: ModelSelectorProps) => {
   const [modelSearchQuery, setModelSearchQuery] = useState('');
   const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
   const [focusedModelIndex, setFocusedModelIndex] = useState(-1);
