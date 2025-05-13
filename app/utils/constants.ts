@@ -10,8 +10,8 @@ export const PROVIDER_REGEX = /\[Provider: (.*?)\]\n\n/;
 export const DEFAULT_MODEL = 'claude-3-5-sonnet-latest';
 export const PROMPT_COOKIE_KEY = 'cachedPrompt';
 
-// Setup Anthropic provider with API key
-setupAnthropicProvider();
+// Setup Anthropic provider with API key from environment
+setupAnthropicProvider(import.meta.env);
 
 // Use the standard LLM manager
 const llmManager = LLMManager.getInstance(import.meta.env);
