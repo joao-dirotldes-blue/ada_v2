@@ -64,19 +64,31 @@ export default class AnthropicProvider extends BaseProvider {
     apiKeys?: Record<string, string>;
     providerSettings?: Record<string, IProviderSetting>;
   }) => LanguageModelV1 = (options) => {
-    const { serverEnv, model } = options;
+    const { serverEnv, model, apiKeys } = options;
     
-    // Sempre usar o token do servidor, ignorando as configurações do cliente
-    const apiKey = serverEnv['ANTHROPIC_API_KEY'];
+    // Primeiro, tenta obter o token do ambiente do servidor
+    let apiKey = serverEnv && typeof serverEnv === 'object' ? serverEnv['ANTHROPIC_API_KEY'] : null;
     
-    if (!apiKey) {
-      throw new Error('Anthropic API key not configured on server');
+    // Se não encontrar no serverEnv, verifica em apiKeys como fallback
+    if (!apiKey && apiKeys && apiKeys.Anthropic) {
+      apiKey = apiKeys.Anthropic;
     }
     
-    const anthropic = createAnthropic({
-      apiKey,
-    });
+    // Verificação final
+    if (!apiKey) {
+      console.error('Anthropic API key not found in server environment or client API keys');
+      throw new Error('Anthropic API key not configured');
+    }
+    
+    try {
+      const anthropic = createAnthropic({
+        apiKey,
+      });
 
-    return anthropic(model);
+      return anthropic(model);
+    } catch (error) {
+      console.error('Error creating Anthropic instance:', error);
+      throw new Error(`Failed to initialize Anthropic API: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   };
 }

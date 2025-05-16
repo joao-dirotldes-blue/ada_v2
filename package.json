@@ -1,6 +1,6 @@
 {
-  "name": "bolt",
-  "description": "An AI Agent",
+  "name": "ada",
+  "description": "An AI Agent based on Claude 3-7",
   "private": true,
   "license": "MIT",
   "sideEffects": false,

@@ -80,16 +80,26 @@ async function llmCallAction({ context, request }: ActionFunctionArgs) {
     } catch (error: unknown) {
       console.log(error);
 
-      if (error instanceof Error && error.message?.includes('API key')) {
-        throw new Response('Invalid or missing API key', {
+      console.error('API Call Error:', error);
+      
+      if (error instanceof Error && (error.message?.includes('API key') || error.message?.includes('Anthropic API key'))) {
+        logger.error(`API Key Error: ${error.message}`);
+        throw new Response('Invalid or missing API key. Please check server environment configuration.', {
           status: 401,
           statusText: 'Unauthorized',
         });
       }
 
-      throw new Response(null, {
+      // Resposta de erro mais informativa
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      logger.error(`Internal Server Error: ${errorMessage}`);
+      
+      throw new Response(JSON.stringify({ error: errorMessage }), {
         status: 500,
         statusText: 'Internal Server Error',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
     }
   } else {
@@ -139,16 +149,26 @@ async function llmCallAction({ context, request }: ActionFunctionArgs) {
     } catch (error: unknown) {
       console.log(error);
 
-      if (error instanceof Error && error.message?.includes('API key')) {
-        throw new Response('Invalid or missing API key', {
+      console.error('API Call Error:', error);
+      
+      if (error instanceof Error && (error.message?.includes('API key') || error.message?.includes('Anthropic API key'))) {
+        logger.error(`API Key Error: ${error.message}`);
+        throw new Response('Invalid or missing API key. Please check server environment configuration.', {
           status: 401,
           statusText: 'Unauthorized',
         });
       }
 
-      throw new Response(null, {
+      // Resposta de erro mais informativa
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      logger.error(`Internal Server Error: ${errorMessage}`);
+      
+      throw new Response(JSON.stringify({ error: errorMessage }), {
         status: 500,
         statusText: 'Internal Server Error',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
     }
   }
