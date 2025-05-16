@@ -19,27 +19,6 @@ export default class AnthropicProvider extends BaseProvider {
       provider: 'Anthropic',
       maxTokenAllowed: 8000,
     },
-    {
-      name: 'claude-3-5-sonnet-latest',
-      label: 'Claude 3.5 Sonnet (new)',
-      provider: 'Anthropic',
-      maxTokenAllowed: 8000,
-    },
-    {
-      name: 'claude-3-5-sonnet-20240620',
-      label: 'Claude 3.5 Sonnet (old)',
-      provider: 'Anthropic',
-      maxTokenAllowed: 8000,
-    },
-    {
-      name: 'claude-3-5-haiku-latest',
-      label: 'Claude 3.5 Haiku (new)',
-      provider: 'Anthropic',
-      maxTokenAllowed: 8000,
-    },
-    { name: 'claude-3-opus-latest', label: 'Claude 3 Opus', provider: 'Anthropic', maxTokenAllowed: 8000 },
-    { name: 'claude-3-sonnet-20240229', label: 'Claude 3 Sonnet', provider: 'Anthropic', maxTokenAllowed: 8000 },
-    { name: 'claude-3-haiku-20240307', label: 'Claude 3 Haiku', provider: 'Anthropic', maxTokenAllowed: 8000 },
   ];
 
   async getDynamicModels(
@@ -85,14 +64,15 @@ export default class AnthropicProvider extends BaseProvider {
     apiKeys?: Record<string, string>;
     providerSettings?: Record<string, IProviderSetting>;
   }) => LanguageModelV1 = (options) => {
-    const { apiKeys, providerSettings, serverEnv, model } = options;
-    const { apiKey } = this.getProviderBaseUrlAndKey({
-      apiKeys,
-      providerSettings,
-      serverEnv: serverEnv as any,
-      defaultBaseUrlKey: '',
-      defaultApiTokenKey: 'ANTHROPIC_API_KEY',
-    });
+    const { serverEnv, model } = options;
+    
+    // Sempre usar o token do servidor, ignorando as configurações do cliente
+    const apiKey = serverEnv['ANTHROPIC_API_KEY'];
+    
+    if (!apiKey) {
+      throw new Error('Anthropic API key not configured on server');
+    }
+    
     const anthropic = createAnthropic({
       apiKey,
     });
